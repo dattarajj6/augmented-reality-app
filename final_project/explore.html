@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Projects - Softer Neubrutalism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Archivo+Black&display=swap">
+    <style>
+        body {
+            background: #f4ebff;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-frame {
+            width: 360px;
+            height: 720px;
+            background-color: #f4ebff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen-content {
+            height: 100%;
+            background: radial-gradient(circle at top left, #f4ebff, #f4ebff);
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            padding-bottom: 60px;
+        }
+
+        .btn-primary {
+            background-color: #a479fc;
+            color: #0a0a0a;
+            padding: 12px 0;
+            border-radius: 8px;
+            width: 100%;
+            position: relative;
+            font-family: 'Archivo Black', sans-serif;
+            border: none;
+            box-shadow: 3px 3px 0 #000;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #8c5edc;
+            box-shadow: 4px 4px 0 #000;
+            transform: scale(1.05);
+        }
+
+        .text-highlight {
+            font-weight: 700;
+            font-family: 'Archivo Black', sans-serif; 
+            color: #0a0a0a;
+        }
+
+        .text-secondary {
+            color: #6b7280;
+        }
+
+        .project-image {
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-frame">
+        <div class="screen-content">
+            <!-- Image Section -->
+            <img src="https://cdn0.iconfinder.com/data/icons/technology-390/600/9-1024.png" alt="Project Icon" class="project-image">
+
+            <!-- Text Section -->
+            <div class="text-center mb-4">
+                <h1 class="text-2xl text-highlight leading-snug">
+                    Get Started
+                </h1>
+                <p class="text-secondary mt-2 text-sm">
+                    Indulge yourself in Augmented Reality Experience
+                </p>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div>
+                <button class="btn-primary" id="start-button">
+                    Get started
+                </button>
+                <p class="text-center mt-3 text-highlight cursor-pointer" style="color: #0a0a0a;">Create new account</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', async () => {
+            const userConfirmed = confirm("This app requires access to your camera for augmented reality features. Do you allow access?");
+            if (userConfirmed) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.autoplay = true;
+                    document.querySelector('.phone-frame').appendChild(video);
+                } catch (error) {
+                    console.error("Error accessing camera: ", error);
+                    alert("Unable to access the camera. Please check your permissions.");
+                }
+            } else {
+                alert("Camera access is required to use this feature.");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="color"], input[type="file"], input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #8A4DFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #7a3ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f9f9f9;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .delete-btn:hover {
+            background-color: #e60000;
+        }
+        .download-btn {
+            margin-top: 20px;
+            background-color: #28a745;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        
+        <div id="viewCount"></div>
+        <canvas id="viewGraph" width="400" height="200"></canvas>
+        
+        <form id="adminForm" enctype="multipart/form-data">
+            <label for="imageOption">Choose Image Source:</label>
+            <select id="imageOption" name="imageOption" onchange="toggleImageInput()">
+                <option value="upload">Upload Image</option>
+                <option value="link">Image Link</option>
+            </select>
+
+            <div id="uploadSection">
+                <label for="image">Upload Splash Image:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+
+            <div id="linkSection" style="display: none;">
+                <label for="imageLink">Image Link:</label>
+                <input type="url" id="imageLink" name="imageLink" placeholder="https://example.com/image.jpg">
+            </div>
+
+            <label for="title">Application Name:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="fontName">Font Name:</label>
+            <input type="text" id="fontName" name="fontName" placeholder="e.g., Arial">
+
+            <label for="bgcolor">Background Color:</label>
+            <input type="color" id="bgcolor" name="bgcolor" value="#8A4DFF" required>
+
+            <button type="submit">Update Splash Screen</button>
+        </form>
+
+        <div id="splashDataTable">
+            <h3>Current Splash Screen Data</h3>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Background Color</th>
+                        <th>Font Name</th>
+                        <th>Image</th>
+                        <th>Date Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <button class="download-btn" id="downloadBtn">Download History as PDF</button>
+    </div>
+
+    <script>
+        function toggleImageInput() {
+            const option = document.getElementById('imageOption').value;
+            document.getElementById('uploadSection').style.display = option === 'upload' ? 'block' : 'none';
+            document.getElementById('linkSection').style.display = option === 'link' ? 'block' : 'none';
+        }
+
+        // Fetch and display the view count and graph data from the database
+        fetch('logic.php?action=getViewCount')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('viewCount').innerText = `Splash Screen Views: ${data.count}`;
+                drawGraph(data.monthlyViews, data.count); // Use total views as input for the graph
+                loadRecentSplashData();
+            });
+
+        // Handle form submission
+        document.getElementById('adminForm').onsubmit = function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('logic.php?action=updateSplash', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => {
+                alert(data.message);
+                fetch('logic.php?action=getViewCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('viewCount').innerText = `Splash Screen Views: ${data.count}`;
+                        drawGraph(data.monthlyViews, data.count); // Update graph with new total views
+                        loadRecentSplashData();
+                    });
+              });
+        };
+
+        function drawGraph(monthlyViews, totalViews) {
+            const ctx = document.getElementById('viewGraph').getContext('2d');
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Splash Screen Views',
+                    data: monthlyViews.concat(totalViews), // Use total views as part of the data
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            };
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: Math.max(totalViews, Math.max(...monthlyViews)) + 5 // Adjust max value dynamically
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}`; // Show the label with the view count
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            new Chart(ctx, config);
+        }
+
+        function loadRecentSplashData() {
+            fetch('logic.php?action=getRecentSplashData')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).innerText = item.title;
+                        row.insertCell(1).innerText = item.bgcolor;
+                        row.insertCell(2).innerText = item.font_name;
+                        row.insertCell(3).innerHTML = `<img src="${item.image.includes('http') ? item.image : 'uploads/' + item.image}" alt="Image" style="width: 50px; height: auto;">`;
+                        row.insertCell(4).innerText = item.created_at;
+                        const deleteCell = row.insertCell(5);
+                        const deleteButton = document.createElement('button');
+                        deleteButton.innerText = 'Delete';
+                        deleteButton.className = 'delete-btn';
+                        deleteButton.onclick = function() {
+                            deleteSplashData(item.id);
+                        };
+                        deleteCell.appendChild(deleteButton);
+                    });
+                });
+        }
+
+        function deleteSplashData(id) {
+            fetch(`logic.php?action=deleteSplash&id=${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadRecentSplashData();
+            });
+        }
+
+        // Download history as PDF
+        document.getElementById('downloadBtn').onclick = function() {
+            fetch('logic.php?action=getRecentSplashData')
+                .then(response => response.json())
+                .then(data => {
+                    const pdfContent = data.map(item => 
+                        `Title: ${item.title}\nBackground Color: ${item.bgcolor}\nFont Name: ${item.font_name}\nImage: ${item.image}\nDate Created: ${item.created_at}\n\n`
+                    ).join('');
+
+                    const blob = new Blob([pdfContent], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'splash_data.pdf';
+                    link.click();
+                });
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>
+

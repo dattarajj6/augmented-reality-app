@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+   
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+
+    body {
+        background: #f4ebff;
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .screen-content {
+        width: 100%;
+        max-width: 430px;
+        height: 100%;
+        background-color: #f4ebff;
+      ;
+        padding: 20px;
+    }
+
+    .btn-primary, .sign-in-btn {
+        background-color: #a479fc;
+        color: #0a0a0a;
+        padding: 12px 0;
+        border-radius: 8px;
+        width: 100%;
+        font-family: 'Archivo Black', sans-serif;
+        border: none;
+        box-shadow: 3px 3px 0 #000;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    .btn-primary:hover, .sign-in-btn:hover {
+        background-color: #8c5edc;
+        box-shadow: 4px 4px 0 #000;
+        transform: scale(1.05);
+    }
+
+    .text-highlight {
+        font-weight: 700;
+        font-family: 'Archivo Black', sans-serif;
+        color: #0a0a0a;
+    }
+
+    .text-secondary {
+        color: #6b7280;
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: bold;
+        color: black;
+    }
+
+    p {
+        color: #666;
+        font-size: 14px;
+        margin: 5px 0 15px;
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .input-group label {
+        font-size: 14px;
+        font-weight: 600;
+        color: black;
+    }
+
+    .input-box {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid black;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .input-box input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        background: transparent;
+        padding: 5px;
+    }
+
+    .input-box img {
+        margin-left: 10px;
+        width: 16px;
+        height: 16px;
+    }
+
+    .options {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .options label {
+        display: flex;
+        align-items: center;
+    }
+
+    .options input {
+        margin-right: 5px;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        font-size: 14px;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: black;
+        margin: 0 10px;
+    }
+
+    .qr-login {
+        width: 100%;
+        background: white;
+        border: 1px solid black;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        color: black;
+    }
+
+    .qr-login img {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+    }
+</style>
+</head>
+<body>
+    <div class="screen-content">
+        <div class="text-center mb-4">
+            <h2 class="text-highlight leading-snug">Sign in</h2>
+            <p class="text-secondary mt-2 text-xs">
+                Enter your account details or create one.
+            </p>
+        </div>
+
+        <form action="login.php" method="POST" onsubmit="return validateForm()">
+            <div class="input-group">
+                <label>Email</label>
+                <div class="input-box">
+                    <input type="email" name="email" id="email" required>
+                    <img src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/439/aiga_mail-512.png" alt="Email Icon">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <div class="input-box">
+                    <input type="password" name="password" id="password" required>
+                    <img id="password-toggle" src="https://cdn0.iconfinder.com/data/icons/font-awesome-solid-vol-2/640/eye-slash-1024.png" alt="Show Password" class="cursor-pointer" onclick="togglePasswordVisibility()"/>
+                </div>
+            </div>
+            <div class="options">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="recoverpassword.html" style="text-decoration: none; color: black;">Recover password</a>
+            </div>
+            <button class="sign-in-btn">Sign in</button>
+            <div class="divider">or</div>
+            <a href="signup.html" class="qr-login">
+                <img src="https://cdn1.iconfinder.com/data/icons/social-messaging-productivity-4/128/add-user-3-1024.png" alt="Create Account Icon"> Create account
+            </a>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const passwordToggle = document.getElementById('password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.src = 'https://cdn0.iconfinder.com/data/icons/font-awesome-solid-vol-2/576/eye-512.png';
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.src = 'https://cdn0.iconfinder.com/data/icons/font-awesome-solid-vol-2/640/eye-slash-1024.png';
+            }
+        }
+
+        function validateForm() {
+            const emailInput = document.getElementById('email').value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
+            if (!emailPattern.test(emailInput)) {
+                alert("Please enter a valid email address.");
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+</html>
+
+
+

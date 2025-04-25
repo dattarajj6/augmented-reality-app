@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F8FC;
+            padding: 20px;
+            display: flex;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .form-section {
+            margin: 20px 0;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #C5B3FF;
+            border-radius: 5px;
+        }
+        button {
+            background: #A088FF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background: #8B72F9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #C5B3FF;
+            padding: 10px;
+            text-align: center;
+        }
+        .redeemed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<aside class="bg-white w-64 p-6 shadow-xl">
+    <h1 class="text-3xl font-bold mb-8">NextGen Reality</h1>
+    <nav class="space-y-4">
+        <a href="#" class="flex items-center space-x-2 text-blue-500 font-medium hover:text-blue-600">
+            <span>🏠</span> <span>Users Details</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 hover:text-blue-500">
+            <span>📄</span> <span>Coins Details</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 hover:text-blue-500">
+            <span>📊</span> <span>Splash Screen</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 hover:text-blue-500">
+            <span>👍</span> <span>Settings</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 hover:text-blue-500">
+            <span>💬</span> <span>Coins</span>
+        </a>
+        <a href="#" class="flex items-center space-x-2 hover:text-blue-500">
+            <span>🔗</span> <span>Share</span>
+        </a>
+    </nav>
+    <div class="mt-10 border-t pt-6">
+        <button class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">Logout</button>
+        <div class="flex items-center space-x-2 mt-4">
+            <span>🌙</span> <span>Dark Mode</span>
+            <input type="checkbox" class="ml-auto">
+        </div>
+    </div>
+</aside>
+
+<main class="flex-1 p-10">
+    <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-blue-500 text-white p-6 rounded-xl shadow-md text-center">
+            <p class="text-lg">Total Coins Created</p>
+            <h2 id="totalCoinsCreated" class="text-4xl font-bold">0</h2>
+        </div>
+        <div class="bg-yellow-400 text-white p-6 rounded-xl shadow-md text-center">
+            <p class="text-lg">Coins Redeemed</p>
+            <h2 id="totalCoinsRedeemed" class="text-4xl font-bold">0</h2>
+        </div>
+    </div>
+
+    <h2 class="text-lg mb-2">Add Coins</h2>
+    <div class="flex space-x-2 mb-8">
+        <button id="btn-100" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">100 Coins</button>
+        <button id="btn-200" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">200 Coins</button>
+        <button id="btn-500" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">500 Coins</button>
+    </div>
+
+    <!-- Popups for adding coins -->
+    <div id="popup-100" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md w-80">
+            <p class="text-lg mb-4">Add 100 Coins</p>
+            <input type="text" id="popupCode100" placeholder="Enter 8-digit code" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-2">
+                <button id="btn-add-100" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                <button id="btn-cancel-100" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-200" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md w-80">
+            <p class="text-lg mb-4">Add 200 Coins</p>
+            <input type="text" id="popupCode200" placeholder="Enter 8-digit code" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-2">
+                <button id="btn-add-200" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                <button id="btn-cancel-200" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-500" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md w-80">
+            <p class="text-lg mb-4">Add 500 Coins</p>
+            <input type="text" id="popupCode500" placeholder="Enter 8-digit code" class="w-full p-2 border rounded mb-4">
+            <div class="flex justify-end space-x-2">
+                <button id="btn-add-500" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                <button id="btn-cancel-500" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="redeemedChart" class="mb-8"></canvas>
+
+    <h2 class="text-2xl font-bold mb-4">Recent Activity</h2>
+    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+        <table class="w-full table-auto border-collapse">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-3">ID</th>
+                    <th class="p-3">Code</th>
+                    <th class="p-3">Coins</th>
+                    <th class="p-3">Status</th>
+                </tr>
+            </thead>
+            <tbody id="codesTable">
+                <!-- Dynamic rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    // Function to load total coins created and redeemed
+    function loadCoinStatistics() {
+        fetch('get_coin_statistics.php') // Assuming you have this endpoint
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('totalCoinsCreated').innerText = data.totalCreated || 0;
+                document.getElementById('totalCoinsRedeemed').innerText = data.totalRedeemed || 0;
+            })
+            .catch(error => {
+                console.error('Error fetching coin statistics:', error);
+            });
+    }
+
+    // Show popup for adding 100 coins
+    document.getElementById('btn-100').addEventListener('click', () => {
+        document.getElementById('popup-100').classList.remove('hidden');
+    });
+
+    // Show popup for adding 200 coins
+    document.getElementById('btn-200').addEventListener('click', () => {
+        document.getElementById('popup-200').classList.remove('hidden');
+    });
+
+    // Show popup for adding 500 coins
+    document.getElementById('btn-500').addEventListener('click', () => {
+        document.getElementById('popup-500').classList.remove('hidden');
+    });
+
+    // Cancel buttons
+    document.querySelectorAll('[id^="btn-cancel-"]').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const popupId = event.target.id.replace('btn-cancel', 'popup');
+            document.getElementById(popupId).classList.add('hidden');
+        });
+    });
+
+    // Add 100 coins
+    document.getElementById('btn-add-100').addEventListener('click', () => {
+        addCoins(100, 'popupCode100', 'popup-100');
+    });
+
+    // Add 200 coins
+    document.getElementById('btn-add-200').addEventListener('click', () => {
+        addCoins(200, 'popupCode200', 'popup-200');
+    });
+
+    // Add 500 coins
+    document.getElementById('btn-add-500').addEventListener('click', () => {
+        addCoins(500, 'popupCode500', 'popup-500');
+    });
+
+    function addCoins(coins, codeInputId, popupId) {
+        const codeInput = document.getElementById(codeInputId);
+        const code = codeInput.value.trim();
+
+        // Validate code length
+        if (code.length === 8) {
+            fetch('add_code.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `code=${code}&coins=${coins}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                codeInput.value = ''; // Clear input
+                loadCodes(); // Refresh the table
+                loadCoinStatistics(); // Refresh coin statistics
+                document.getElementById(popupId).classList.add('hidden'); // Hide the popup
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding code. Please try again.');
+            });
+        } else {
+            alert("Please enter an 8-digit code.");
+        }
+    }
+
+    function loadCodes() {
+        fetch('get_codes.php')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#codesTable');
+                tableBody.innerHTML = ''; // Clear previous rows
+                data.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="p-3">${index + 1}</td>
+                                   <td class="${row.redeemed ? 'redeemed' : ''}">${row.code}</td>
+                                   <td class="p-3">${row.coins}</td>
+                                   <td class="p-3"><button class="${row.redeemed ? 'bg-red-500' : 'bg-green-500'} text-white px-3 py-1 rounded">${row.redeemed ? 'Redeemed' : 'Not Redeemed'}</button></td>`;
+                    tableBody.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching codes:', error);
+            });
+    }
+
+    // Load codes and coin statistics on page load
+    loadCodes();
+    loadCoinStatistics();
+
+    const ctx = document.getElementById('redeemedChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['December', 'January', 'February', 'March'],
+            datasets: [{
+                label: 'Coins Redeemed',
+                data: [0, 200, 600, 1000],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, max: 1000 }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
+

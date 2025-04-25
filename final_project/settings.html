@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Softer Neubrutalism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Archivo:wght@900&display=swap">
+    <style>
+        body {
+            background: #f4ebff;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen-content {
+            height: 120%;
+            background: radial-gradient(circle at top left, #f4ebff, #f4ebff);
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 40px;
+            align-items: center;
+        }
+
+        .text-highlight {
+            font-weight: 1000;
+            font-family: 'Archivo', sans-serif;
+            color: #0a0a0a;
+            font-size: 2.5rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .menu-item {
+            background-color: #dededf;
+            border-radius: 12px;
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            width: 135%;
+            max-width: 500px;
+        }
+
+        .menu-item img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .menu-item-text {
+            color: #0a0a0a;
+            font-weight: 600;
+            flex-grow: 1;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #f7f3f3;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #fbfafa;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        /* Terms Modal styles */
+        .terms-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .terms-modal-content {
+            background-color: #f7f3f3;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #fbfafa;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        /* Feedback form styles */
+        .feedback-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            min-width: 300px;
+            max-width: 100%;
+            height: 100px; /* Increased height */
+        }
+
+        /* Toast styles */
+        .toast {
+            background-color: #d5d8d5;
+            color: rgb(57, 56, 56);
+            padding: 16px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            margin-top: 10px; /* Space below the "Rate this App" section */
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <div class="screen-content">
+            <div class="text-center mb-4">
+                <h1 class="text-2xl text-highlight leading-snug" style="font-family: 'Archivo', sans-serif; font-weight: 900;">Settings</h1>
+                <img src="https://cdn1.iconfinder.com/data/icons/scenes-2-3/1000/settings_-_dials_options_preferences_man-512.png" alt="Settings Icon" class="mx-auto w-24 h-24 my-4">
+            </div>
+
+            <div class="menu-item">
+                <span class="menu-item-text">Notification</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" value="" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <div class="menu-item" onclick="openTermsModal()">
+                <img src="https://cdn0.iconfinder.com/data/icons/work-from-home-17/512/Conditions-policy-terms-agreement-contract-512.png" alt="Terms and Conditions Icon">
+                <span class="menu-item-text">Terms and Conditions</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+
+            <div class="menu-item"onclick="openTermsModal()">
+                <img src="https://cdn1.iconfinder.com/data/icons/carbon-design-system-vol-6/32/policy-1024.png" alt="Privacy Policy Icon">
+                <span class="menu-item-text">Privacy Policy</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+
+            <div class="menu-item" onclick="openTermsModal()">
+                <img src="https://cdn3.iconfinder.com/data/icons/user-interface-2326/24/share-128.png" alt="Share with Friends Icon">
+                <span class="menu-item-text">Share with Friends</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+
+            <div class="menu-item" onclick="openFeedbackForm()">
+                <img src="https://cdn0.iconfinder.com/data/icons/essentials-9/128/__Star-512.png" alt="Rate this App Icon">
+                <span class="menu-item-text">Rate this App</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+
+            <!-- Toast Message -->
+            <div id="toast" class="toast"></div>
+
+            <div class="menu-item"onclick="openTermsModal()">
+                <img src="https://cdn4.iconfinder.com/data/icons/user-interface-937/24/22.about_info_information_help_ui-512.png" alt="About Us Icon">
+                <span class="menu-item-text">About Us</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+
+            <div class="menu-item"onclick="openFeedbackForm()">
+                <img src="https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/help-128.png" alt="Help Icon">
+                <span class="menu-item-text">Help</span>
+                <img class="icon-right" src="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-03-512.png" alt="Arrow Icon">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Feedback Form -->
+    <div id="feedbackModal" class="modal" onclick="closeFeedbackForm(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="text-center">
+                <img src="https://cdn3.iconfinder.com/data/icons/design-and-development-illustration/512/07-512.png" 
+                     alt="Feedback Icon" class="w-32 h-32 mx-auto">
+            </div>
+            <h1 class="text-center text-slate-200 text-xl font-bold">Send Feedback</h1>
+            <form action="submit_feedback.php" method="POST">
+                <textarea name="message" placeholder="Your feedback..." class="feedback-textarea bg-slate-100 text-slate-600 h-40 placeholder:text-slate-600 placeholder:opacity-50 border border-slate-200 resize-none outline-none rounded-lg p-2 duration-300 focus:border-slate-600"></textarea>
+                <div class="feedback-buttons">
+                    <button type="button" class="fill-slate-600 flex justify-center items-center rounded-lg p-2 duration-300 bg-slate-100 hover:border-slate-600 focus:fill-blue-200 focus:bg-blue-400 border border-slate-200">
+                        <img src="https://cdn0.iconfinder.com/data/icons/minimal-set-four/32/minimal-22-1024.png" alt="First Button Icon" class="h-5 w-5">
+                    </button>
+                    <button type="button" class="fill-slate-600 flex justify-center items-center rounded-lg p-2 duration-300 bg-slate-100 hover:border-slate-600 focus:fill-blue-200 focus:bg-blue-400 border border-slate-200">
+                        <img src="https://cdn1.iconfinder.com/data/icons/friendly-ui-essentials/100/Sad-512.png" alt="Second Button Icon" class="h-5 w-5">
+                    </button>
+                    <button type="submit" class="bg-slate-100 stroke-slate-600 border border-slate-200 flex justify-center rounded-lg p-2 duration-300 hover:border-slate-600 hover:text-white focus:stroke-blue-200 focus:bg-blue-400">
+                        <img src="https://cdn2.iconfinder.com/data/icons/generic-02/100/collections_09-53-512.png" alt="Submit Icon" class="h-8 w-8">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Terms and Conditions -->
+    <div id="termsModal" class="terms-modal" onclick="closeTermsModal(event)">
+        <div class="terms-modal-content" onclick="event.stopPropagation()">
+            <header>
+                <h1>Terms and Services</h1>
+            </header>
+            <section class="rtf">
+                <h1>Terms and Conditions</h1>
+                <p>Welcome to NextGen Reality! By accessing or using our application, you agree to comply with and be bound by the following terms and conditions. If you do not agree to these terms, please do not use our app.</p>
+                <ol>
+                    <li><strong>Content Usage</strong>: All content provided within the NextGen Reality application is the intellectual property of NextGen Reality. No part of this content may be reproduced, distributed, or used in any manner without our express written permission.</li>
+                    <li><strong>Modification of Terms</strong>: NextGen Reality reserves the right to modify these Terms and Conditions at any time. Any changes will be effective immediately upon posting on our application. Your continued use of the app after any changes constitutes your acceptance of the new terms.</li>
+                    <li><strong>Disclaimer</strong>: The information provided in our application is for educational and informational purposes only. We do not guarantee the accuracy or completeness of the information.</li>
+                </ol>
+                <hr>
+                <h1>Privacy Policy</h1>
+                <p>At NextGen Reality, we value your privacy. This Privacy Policy outlines how we collect, use, and protect your information.</p>
+                <ol>
+                    <li><strong>Information Collection</strong>: We may collect personal information when you interact with our application, including but not limited to your name, email address, and usage data.</li>
+                    <li><strong>Usage of Information</strong>: We use the information we collect to improve our services, respond to inquiries, and communicate with you about your account and our services.</li>
+                    <li><strong>Changes to Privacy Policy</strong>: NextGen Reality reserves the right to change this Privacy Policy at any time. We will notify you of any changes by posting the new policy on our application.</li>
+                </ol>
+                <hr>
+                <h1>About Us</h1>
+                <p>NextGen Reality is an innovative augmented reality application designed to enhance students' learning experiences through visualization of concepts. Our mission is to make learning more engaging and accessible through cutting-edge technology.</p>
+                <p>For assistance or inquiries, please visit our website at <a href="http://nextgenreality.com">nextgenreality.com</a>, where you can contact our support team for help.</p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function openFeedbackForm() {
+            document.getElementById('feedbackModal').style.display = 'block';
+        }
+
+        function closeFeedbackForm(event) {
+            if (event.target === document.getElementById('feedbackModal')) {
+                document.getElementById('feedbackModal').style.display = 'none';
+            }
+        }
+
+        function openTermsModal() {
+            document.getElementById('termsModal').style.display = 'block';
+        }
+
+        function closeTermsModal(event) {
+            if (event.target === document.getElementById('termsModal')) {
+                document.getElementById('termsModal').style.display = 'none';
+            }
+        }
+
+        // Show toast message if it exists
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        if (status === 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = 'Feedback sent Successfully';
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none'; // Hide after 3 seconds
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
+

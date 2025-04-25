@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splash Screen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+        }
+        .splash-container {
+            text-align: center;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            height: 100%; /* Full height */
+            width: 100%; /* Full width */
+            display: flex; /* Use flexbox to center content */
+            flex-direction: column; /* Stack elements vertically */
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+        }
+        .splash-container.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        img {
+            width: 150px; /* Adjust the size of the image */
+            height: auto;
+            margin-bottom: 20px; /* Space between image and text */
+        }
+        h1 {
+            color: rgb(15, 15, 15);
+            font-size: 2rem; /* Size of the app name */
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-container" id="splash">
+        <img id="splashImage" src="" alt="Splash Image">
+        <h1 id="appName" style="font-family: 'Arial';"></h1> <!-- Default font -->
+    </div>
+
+    <script>
+        // Fetch splash screen data from the database
+        fetch('logic.php?action=getSplashData')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('splashImage').src = data.image.includes('http') ? data.image : 'uploads/' + data.image; // Check if image is a URL or a local path
+                document.getElementById('appName').innerText = data.title;
+                document.getElementById('appName').style.fontFamily = data.font_name || 'Arial'; // Use specified font or default
+                document.body.style.backgroundColor = data.bgcolor; // Set background color
+
+                // Increment view count when the splash screen is shown
+                fetch('logic.php?action=incrementViewCount');
+
+                // Add fade-out effect and redirect after 1 second
+                setTimeout(() => {
+                    const splash = document.getElementById('splash');
+                    splash.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'explore.html'; // Redirect to your main application page
+                    }, 500);
+                }, 1000);
+            });
+    </script>
+
+</body>
+</html>
+
